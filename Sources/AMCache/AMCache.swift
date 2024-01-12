@@ -1,7 +1,7 @@
 import Foundation
 
 public class AMCache {
-    private var cachedValues: [String: CacheManagerData] = [:]
+    private var cachedValues: [String: AMCacheData] = [:]
     
     public init() {
         loadFromDisk(ignoreExpired: true)
@@ -16,7 +16,7 @@ public class AMCache {
             let value = value,
             let cachedString = String(data: value, encoding: .utf8)
         else { return false }
-        cachedValues[key] = CacheManagerData(response: cachedString, data: value)
+        cachedValues[key] = AMCacheData(response: cachedString, data: value)
         
         if (cachedValues.count % max(1, CacheConfiguration.dumpEvery)) == 0 {
             saveToDisk()
@@ -38,7 +38,7 @@ public class AMCache {
         let file = CacheConfiguration.dbFile
 
         var linesToWrite: [String] = []
-        cachedValues.forEach { (key: Hashable, value: CacheManagerData) in
+        cachedValues.forEach { (key: Hashable, value: AMCacheData) in
             if !value.isExpired, let encoded = try? JSONEncoder().encode(value) {
                 linesToWrite.append("\(key),\(encoded.base64EncodedString())")
             }
@@ -76,7 +76,7 @@ public class AMCache {
                     let line = $0.split(separator: ",", maxSplits: 1).map { String($0) }
                     if line.count > 1,
                        let encodedData = line[1].data(using: .utf8),
-                       let decoded = try? JSONDecoder().decode(CacheManagerData.self, from: encodedData) {
+                       let decoded = try? JSONDecoder().decode(AMCacheData.self, from: encodedData) {
                         if ignoreExpired || !decoded.isExpired {
                             cachedValues[line[0]] = decoded
                         }
