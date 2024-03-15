@@ -1,3 +1,4 @@
+// Cache by Alex Maggio
 import Foundation
 
 public class AMCache {
@@ -11,6 +12,7 @@ public class AMCache {
         cachedValues.removeAll()
     }
     
+    @discardableResult
     public func cacheValue(key: String, value: Data?) -> Bool {
         guard
             let value = value,
