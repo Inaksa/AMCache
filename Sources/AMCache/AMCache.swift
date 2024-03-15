@@ -1,3 +1,4 @@
+// Cache by Alex Maggio
 import Foundation
 
 public class AMCache {
